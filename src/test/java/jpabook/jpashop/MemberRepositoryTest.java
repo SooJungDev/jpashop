@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 class MemberRepositoryTest {
 
-    @Autowired
+/*    @Autowired
     MemberRepository memberRepository;
 
     @Test
@@ -30,12 +30,12 @@ class MemberRepositoryTest {
         Assertions.assertThat(findMember.getId()).isEqualTo(member.getId());
         Assertions.assertThat(findMember.getUsername()).isEqualTo(member.getUsername());
         Assertions.assertThat(findMember).isEqualTo(member);
-        /**
+        *//**
          * 같은 EntityManger 에서 id 가 같으면 같은 객체로 본다
          * 영속성 컨텍스트에서 관리 1차캐시 적용되어 있음
-         */
+         *//*
         System.out.println("findMember == member " +( findMember == member));
 
 
-    }
+    }*/
 }
