@@ -1,23 +1,16 @@
 package jpabook.jpashop.repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-
-import org.springframework.stereotype.Repository;
-import org.springframework.util.StringUtils;
-
 import jpabook.jpashop.domain.Order;
 import jpabook.jpashop.domain.OrderSearch;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
@@ -35,6 +28,7 @@ public class OrderRepository {
     /**
      * JPAQL
      * 실무에서 사용하지 않음 QueryDsl 추천
+     *
      * @param orderSearch
      * @return
      */
@@ -66,7 +60,7 @@ public class OrderRepository {
         }
 
         TypedQuery<Order> query = em.createQuery(jpql, Order.class)
-                                    .setMaxResults(1000);
+                .setMaxResults(1000);
 
         if (orderSearch.getOrderStatus() != null) {
             query = query.setParameter("status", orderSearch.getOrderStatus());
@@ -107,4 +101,29 @@ public class OrderRepository {
         return query.getResultList();
     }
 
+    /**
+     * @return
+     */
+    public List<Order> findAllWithMemberDelivery() {
+        return em.createQuery("select o from Order  o" +
+                        " join fetch o.member m " +
+                        " join fetch o.delivery", Order.class)
+                .getResultList();
+    }
+
+
+    /**
+     * 데이터베이스 입장에서는 2개이기 때문에 뻥튀기됨
+     * @return
+     */
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                "select o from Order o " +
+                        "join fetch o.member m " +
+                        "join fetch o.delivery d " +
+                        "join fetch o.orderItems oi " +
+                        "join fetch oi.item i", Order.class)
+                .getResultList();
+
+    }
 }
