@@ -111,18 +111,34 @@ public class OrderRepository {
                 .getResultList();
     }
 
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
+        return em.createQuery("select o from Order  o" +
+                        " join fetch o.member m " +
+                        " join fetch o.delivery", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
 
     /**
      * 데이터베이스 입장에서는 2개이기 때문에 뻥튀기됨
+     * jpa distinct SQL에 distinct 추가하고, 더해서 같은 엔티티가 조회되면
+     * 애플리케이션에서 중복을 걸러준다.
+     * 일대다 페치조인하는 순간 단점 페이징 불가능
+     * 일대다 조인하는 순가 오더의 기준자체가 틀어짐
+     * 결과 4개  오더의 사이즈가 정확하게 안나옴 오더 기준으로 페이징하고 싶은데 데이터가 뻥튀기가 되서 오더 아이템 기준으로 되어버림
+     * 일대다 페치조인 페이징 못함 실무에서 못씀
+     *
      * @return
      */
     public List<Order> findAllWithItem() {
         return em.createQuery(
-                "select o from Order o " +
-                        "join fetch o.member m " +
-                        "join fetch o.delivery d " +
-                        "join fetch o.orderItems oi " +
-                        "join fetch oi.item i", Order.class)
+                        "select distinct o from Order o " +
+                                "join fetch o.member m " +
+                                "join fetch o.delivery d " +
+                                "join fetch o.orderItems oi " +
+                                "join fetch oi.item i", Order.class)
                 .getResultList();
 
     }
