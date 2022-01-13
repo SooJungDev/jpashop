@@ -6,12 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
+import jpabook.jpashop.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import jpabook.jpashop.domain.Member;
-import jpabook.jpashop.repository.MemberRepository;
+import jpabook.jpashop.repository.MemberRepositoryOld;
 
 
 @SpringBootTest
@@ -19,7 +20,8 @@ import jpabook.jpashop.repository.MemberRepository;
 class MemberServiceTest {
 
     @Autowired MemberService memberService;
-    @Autowired MemberRepository memberRepository;
+    @Autowired
+    MemberRepository memberRepository;
     @Autowired EntityManager em;
 
     @Test
@@ -33,7 +35,7 @@ class MemberServiceTest {
 
         //then
         //em.flush();
-        assertThat(member).isEqualTo(memberRepository.findOne(saveId));
+        assertThat(member).isEqualTo(memberRepository.findById(saveId));
     }
 
     @Test
